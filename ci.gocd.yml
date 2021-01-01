@@ -19,6 +19,8 @@ pipelines:
                   - build
   docker:
     group: defaultGroup
+    parameters:
+      docker_registry: "localhost:5000"
     materials:
       repo:
         type: configrepo
@@ -39,5 +41,14 @@ pipelines:
                 command: docker
                 arguments:
                   - build
+                  - "--tag"
+                  - "#{docker_registry}/build-pipeline-demo"
                   - .
+      - push:
+          tasks:
+            - exec:
+                command: docker
+                arguments:
+                  - push
+                  - "#{docker_registry}/build-pipeline-demo"
 
