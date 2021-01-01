@@ -8,6 +8,10 @@ pipelines:
     stages:
       - build:
           clean_workspace: true
+          artifacts:
+            - build:
+                source: build/libs
+                destination: build
           tasks:
             - exec:
                 command: ./gradlew
