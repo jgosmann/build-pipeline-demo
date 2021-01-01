@@ -17,4 +17,27 @@ pipelines:
                 command: ./gradlew
                 arguments:
                   - build
+  docker:
+    group: defaultGroup
+    materials:
+      repo:
+        type: configrepo
+      built_jar:
+        pipeline: build
+        stage: build
+    stages:
+      - build:
+          clean_workspace: true
+          tasks:
+            - fetch:
+                pipeline: build
+                stage: build
+                job: build
+                source: build
+                destination: .
+            - exec:
+                command: docker
+                arguments:
+                  - build
+                  - .
 
