@@ -1,16 +1,22 @@
-This is a dummy project to test out [GoCD](https://www.gocd.org/) build
-pipelines.
+This is a dummy project to test out different CI solutions:
 
-# Pre-requisites
+* [GoCD](https://www.gocd.org/)
+* [Travis CI](https://travis-ci.com/)
+
+# GoCD
+
+The pipeline configuration is found in `ci.gocd.yml`.
+
+## Pre-requisites
 
 * [GoCD Server](https://www.gocd.org/download)
 * [GoCD Agent](https://www.gocd.org/download)
 * [Docker](https://www.docker.com/)
 
 
-# Usage
+## Usage
 
-## Starting GoCD
+### Starting GoCD
 
 You will need start both the server and agent to test out the pipeline.
 
@@ -22,7 +28,7 @@ path/to/go-agent console
 The GoCD UI will then be available at `http://localhost:8153/go`.
 
 
-## Starting a Docker registry
+### Starting a Docker registry
 
 We will push the docker image built in the test pipeline to a local registry.
 Start one for testing purposes with:
@@ -32,7 +38,7 @@ docker run -d -p 5000:5000 --restart=always --name registry registry:2
 ```
 
 
-## Setting up the pipeline
+### Setting up the pipeline
 
 1. [Open the GoCD UI](http://localhost:8153/go).
 2. Navigate to Admin → Pipelines, click "Create new pipeline group", and name it
@@ -49,14 +55,14 @@ docker run -d -p 5000:5000 --restart=always --name registry registry:2
       - Resources: defaultGroup
 
 
-# Pre-flight validation
+## Pre-flight validation
 
 [GoCD is supposed to support syntax and preflight validation with gocd-cli.](https://github.com/tomzo/gocd-yaml-config-plugin#validation)
 However, I was unable to get gocd-cli installed.
 All provided installation methods failed for me.
 
 
-# Impressions
+## Impressions
 
 * Some details about the YAML configuration have to be looked up in the [XML
   configuration reference](https://docs.gocd.org/current/configuration/configuration_reference.html).
@@ -68,3 +74,18 @@ All provided installation methods failed for me.
 * The visual stream map (VSM) gives a nice display of dependencies and
   dependents of a pipeline. 🙂
 * Slightly awkward UI navigation 😕 (but not as bad as Jenkins by far imo)
+
+
+# Travis CI
+
+[![Build Status](https://travis-ci.com/jgosmann/build-pipeline-demo.svg?branch=master)](https://travis-ci.com/jgosmann/build-pipeline-demo)
+
+The pipeline configuration is found in `.travis.yml`.
+
+## Impressions
+
+* Quick to setup: just add `.travis.yml` (at least once the general Travis CI
+  setup is done which I have done ages ago) 🙂
+* Minimal code 🙂
+* No passing of artifacts between stages of the pipeline without utilizing an
+  external service. 😐
