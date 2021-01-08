@@ -3,4 +3,9 @@ services:
   - docker
 script:
   - ./gradlew build
-  - docker build .
+  - docker build --tag jgosmann/build-pipeline-demo .
+deploy:
+  provider: script
+  script: bash travis_docker_push.sh
+  on:
+    branch: master
