@@ -1,7 +1,64 @@
 This is a dummy project to test out different CI solutions:
 
+* [Concourse](https://concourse-ci.org/)
 * [GoCD](https://www.gocd.org/)
 * [Travis CI](https://travis-ci.com/)
+
+
+# Concourse
+
+The pipeline configuration is found in `concourse-pipeline.yml`.
+
+## Usage
+
+### Pre-requisites
+
+* [Docker](https://www.docker.com/)
+
+
+### Setting up Concourse
+
+1. Download and run Docker compose file for Concourse:
+   ```bash
+   wget https://concourse-ci.org/docker-compose.yml
+   docker-compose up -d
+   ``
+2. Store login credentials
+   ```bash
+   fly -t build-pipeline-demo login -c http://localhost:8080 -u test -p test
+   ```
+   
+The web interface is accessible at [http://localhost:8080](http://localhost:8080).
+
+### Setting up the pipeline
+
+**Warning:** This stores the credentials in plain text, for production use this
+should definitely use a credentials manager.
+
+1. Create a `credentials.yml` file with credentials for the docker registry, containing:
+  ```yaml
+  docker-registry-username: "your username"
+  docker-registry-token: "your token"
+  ```
+2. Setup the pipeline:
+   ```bash
+   fly -t build-pipeline-demo set-pipeline -c concourse-pipeline.yml -p build-pipeline-demo -l credentials.yml
+   ```
+3. Unpause the pipeline (can also be done via the web interface):
+   ```bash
+   fly -t build-pipeline-demo unpause-pipeline -p build-pipeline-demo
+   ```
+   
+## Impressions
+
+* Based on a few, but (seemingly?) powerful concepts.
+* Can run pipelines locally for testing. 😀
+* Each change to the pipeline needs to applied via a command and the pipeline
+  definition is not fetched from the repository. 😐
+* When applying changes to a pipeline, there is no warning or error for at least
+  some invalid options. 😡
+* Secrets management is extra deployment effort. 🙄
+
 
 # GoCD
 
@@ -70,7 +127,7 @@ All provided installation methods failed for me.
   some instances the naming is not consistent, i.e. `cleanWorkingDir` vs.
   `clean_workspace`. 🙄
   * The XML documentation is annoying to navigate. 😡
-* Build logs supports colors and collapsing. 😀
+* Build logs support colors and collapsing. 😀
 * The visual stream map (VSM) gives a nice display of dependencies and
   dependents of a pipeline. 🙂
 * Slightly awkward UI navigation 😕 (but not as bad as Jenkins by far imo)
@@ -89,3 +146,4 @@ The pipeline configuration is found in `.travis.yml`.
 * Minimal code 🙂
 * No passing of artifacts between stages of the pipeline without utilizing an
   external service. 😐
+* Build logs support colors and collapsing. 😀

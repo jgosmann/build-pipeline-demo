@@ -1,0 +1,38 @@
+---
+resources:
+  - name: resource-repository
+    type: git
+    source:
+      uri: https://github.com/jgosmann/build-pipeline-demo.git
+      branch: concourse
+  - name: resource-docker-image
+    type: docker-image
+    source:
+      repository: jgosmann/build-pipeline-demo
+      username: ((docker-registry-username))
+      password: ((docker-registry-token))
+
+jobs:
+  - name: build-and-push
+    serial: true
+    plan:
+      - get: resource-repository
+      - task: build
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: openjdk}
+          inputs:
+            - name: resource-repository
+          run:
+            dir: resource-repository
+            path: bash
+            args: ["./concourse-build.sh"]
+          outputs:
+            - name: build
+              path: resource-repository/output
+      - put: resource-docker-image
+        inputs: [build]
+        params:
+          build: build
